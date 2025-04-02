@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useMemo, useState } from 'react';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import {
   USER_ID as userId,
   getTodos,
@@ -15,12 +14,12 @@ import { FilterType } from './types/FilterType';
 import { Header } from './components/Header';
 import { ErrorInfo } from './components/ErrorInfo';
 import { Footer } from './components/Footer';
-import { TodoInfo } from './components/TodoInfo';
+import { TodoList } from './components/TodoList';
 import { ErrorType } from './types/ErrorType';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<FilterType>('all');
+  const [filter, setFilter] = useState<FilterType>(FilterType.All);
   const [error, setError] = useState<ErrorType>(ErrorType.NoError);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,18 +32,16 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     getTodos()
-      .then(response => {
-        setTodos(response);
-      })
+      .then(setTodos)
       .catch(() => setError(ErrorType.LoadTodos))
       .finally(() => setLoading(false));
   }, []);
 
   const filteredTodos = useMemo(() => {
     switch (filter) {
-      case 'active':
+      case FilterType.Active:
         return todos.filter(todo => !todo.completed);
-      case 'completed':
+      case FilterType.Completed:
         return todos.filter(todo => todo.completed);
       default:
         return todos;
@@ -188,22 +185,13 @@ export const App: React.FC = () => {
           loading={loading}
         />
 
-        <section className="todoapp__main" data-cy="TodoList">
-          <TransitionGroup>
-            {filteredTodos.map(todo => (
-              <CSSTransition key={todo.id} timeout={300} classNames="item">
-                <TodoInfo
-                  todo={todo}
-                  loading={loading}
-                  loadingIds={loadingIds}
-                  handleDeleteTodo={handleDeleteTodo}
-                  handleUpdateTodo={handleUpdateTodo}
-                  key={todo.id}
-                />
-              </CSSTransition>
-            ))}
-          </TransitionGroup>
-        </section>
+        <TodoList
+          todos={filteredTodos}
+          loading={loading}
+          loadingIds={loadingIds}
+          handleDeleteTodo={handleDeleteTodo}
+          handleUpdateTodo={handleUpdateTodo}
+        />
 
         {todos.length > 0 && (
           <Footer

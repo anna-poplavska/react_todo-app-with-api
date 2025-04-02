@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { FilterType } from '../types/FilterType';
 
 type Props = {
@@ -25,35 +26,25 @@ export const Footer: React.FC<Props> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-        <a
-          href="#/"
-          className={`filter__link${filter === 'all' ? ' selected' : ''}`}
-          data-cy="FilterLinkAll"
-          onClick={() => onFilter('all')}
-        >
-          All
-        </a>
-
-        <a
-          href="#/active"
-          className={`filter__link${filter === 'active' ? ' selected' : ''}`}
-          data-cy="FilterLinkActive"
-          onClick={() => onFilter('active')}
-        >
-          Active
-        </a>
-
-        <a
-          href="#/completed"
-          className={`filter__link${filter === 'completed' ? ' selected' : ''}`}
-          data-cy="FilterLinkCompleted"
-          onClick={() => onFilter('completed')}
-        >
-          Completed
-        </a>
+        {Object.values(FilterType).map(
+          filterType =>
+            typeof filterType === 'string' && (
+              <a
+                key={filterType}
+                href="#/"
+                className={classNames('filter__link', {
+                  // eslint-disable-next-line prettier/prettier
+                  'selected': filter === filterType,
+                })}
+                data-cy={`FilterLink${filterType.charAt(0).toUpperCase() + filterType.slice(1)}`}
+                onClick={() => onFilter(filterType)}
+              >
+                {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
+              </a>
+            ),
+        )}
       </nav>
 
-      {/* this button should be disabled if there are no completed todos */}
       <button
         type="button"
         className="todoapp__clear-completed"

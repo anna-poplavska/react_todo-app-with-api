@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import classNames from 'classnames';
 
 type Props = {
   title: string;
@@ -32,7 +33,10 @@ export const Header: React.FC<Props> = ({
       {isTodosNotEmpty && (
         <button
           type="button"
-          className={`todoapp__toggle-all${isAllCompleted ? ' active' : ''}`}
+          className={classNames('todoapp__toggle-all', {
+            // eslint-disable-next-line prettier/prettier
+            'active': isAllCompleted,
+          })}
           data-cy="ToggleAllButton"
           onClick={handleUpdateStatusAll}
         />
